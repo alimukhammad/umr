@@ -1,6 +1,6 @@
 # Umr
 
-Umr (Uzbek for "life") shows a person's life as a woven grid of weeks. Live at **https://umr.grader.uz** once hosting is set up (below).
+Umr (Uzbek for "life") shows a person's life as a woven grid of weeks. Live at **https://umr.grader.uz** (GitHub Pages, DNS on eskiz.uz).
 
 **Umr has no server.** The birth date, notes and milestones stay in the visitor's own browser. The only thing that leaves the phone is an email address, if someone asks for the weekly email; a Google Apps Script handles that (see [`apps-script/`](apps-script/README.md)).
 
@@ -44,7 +44,7 @@ npm run build:single   # one self-contained dist-single/index.html for a shareab
 Every push to `main` builds, tests and publishes the site through GitHub Pages (`.github/workflows/deploy.yml`).
 
 1. **GitHub:** in this repo, open **Settings → Pages** and set **Source** to **GitHub Actions**.
-2. **DNS:** where grader.uz's DNS is managed, add a record: type `CNAME`, name `umr`, value `alimukhammad.github.io`.
+2. **DNS:** on eskiz.uz (grader.uz → DNS records → + Add): name `umr`, TTL `3600`, type `CNAME`, record `alimukhammad.github.io.` — done 9 Nov 2026.
 3. **Domain:** back in **Settings → Pages**, enter `umr.grader.uz` as the custom domain, wait for the DNS check, then tick **Enforce HTTPS**. The `public/CNAME` file keeps this setting on every deploy.
 4. **Email sign-up:** after deploying the Apps Script, open **Settings → Secrets and variables → Actions → Variables**, add `VITE_REMINDER_ENDPOINT` with the web app URL, then re-run the deploy workflow. Until then the app says "Coming soon" where the sign-up would be.
 
