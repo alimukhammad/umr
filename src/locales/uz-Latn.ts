@@ -106,7 +106,7 @@ export const uzLatn: Dict = {
     title: 'Gaplashmoqchimisiz?',
     message: 'Hamma narsani yolgʻiz koʻtarishingiz shart emas. Kim bilandir gaplashish yordam berishi mumkin — qachon tayyor boʻlsangiz.',
     danger: 'Agar sizga yoki yoningizdagi kishiga hozir xavf tahdid solayotgan boʻlsa, 103 ga qoʻngʻiroq qiling.',
-    abroad: 'Oʻzbekistondan tashqaridamisiz? Mahalliy favqulodda xizmatga qoʻngʻiroq qiling.',
+    abroad: 'Hozircha Umr Oʻzbekistonda yashovchilar uchun, shuning uchun bu yerda Oʻzbekiston raqamlari berilgan.',
     unverified: 'Tasdiqlanmagan — faqat sinov uchun. Bu raqamlar eʻlon qilingan roʻyxatlardan olingan va hali qoʻngʻiroq orqali tekshirilmagan.',
     call: 'Qoʻngʻiroq',
     hoursUnknown: 'Ish vaqti tasdiqlanmagan',

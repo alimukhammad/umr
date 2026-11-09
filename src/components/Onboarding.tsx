@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { dicts, LOCALES, type Locale } from '../lib/i18n';
-import { checkBirthDate, localTodayISO } from '../lib/week';
+import { checkBirthDate, tashkentTodayISO } from '../lib/week';
 import { Mark } from './Mark';
 
 /** S1 Welcome: the idea in one sentence, choose a language. */
@@ -49,7 +49,7 @@ export function BirthDate({
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    const today = localTodayISO();
+    const today = tashkentTodayISO();
     const r = checkBirthDate(Number(y), Number(m), Number(d), today);
     if (r === 'under_18') {
       setD('');

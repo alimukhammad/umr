@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { checkBirthDate, lifeWeek, openWeeks, toISO, weekRange } from './week';
+import { checkBirthDate, lifeWeek, openWeeks, tashkentTodayISO, toISO, weekRange } from './week';
 
 // The cases from Technical requirements, kept as unit tests.
 const cases: [string, string, number, number, number][] = [
@@ -52,4 +52,13 @@ describe('checkBirthDate', () => {
   it('turns 18 on the birthday', () => expect(checkBirthDate(2008, 11, 9, today)).toBe('ok'));
   it('rejects over 110', () => expect(checkBirthDate(1910, 1, 1, today)).toBe('too_old'));
   it('rejects 31 February', () => expect(checkBirthDate(1990, 2, 31, today)).toBe('invalid'));
+});
+
+describe('tashkentTodayISO', () => {
+  it('is already the next day in Tashkent at 19:00 UTC', () => {
+    expect(tashkentTodayISO(new Date('2026-11-09T19:00:00Z'))).toBe('2026-11-10');
+  });
+  it('is still the same day at 18:59 UTC', () => {
+    expect(tashkentTodayISO(new Date('2026-11-09T18:59:00Z'))).toBe('2026-11-09');
+  });
 });

@@ -22,6 +22,8 @@ Built from the Umr product documents (PRD, Technical requirements, Webapp flow, 
 | S8 Keep your grid (Telegram sign-in + consent) | ⏳ Needs server |
 | S9 Weekly reflection in Telegram | ⏳ Needs server and bot |
 
+Audience: people in Uzbekistan at launch. Uzbek Latin is the default whatever the browser language, and weeks roll over at midnight Tashkent time (UTC+5).
+
 Languages: Uzbek Latin, Russian, English — **draft copy**, needs native review. Uzbek uses the current alphabet with ʻ (U+02BB); convert before 22 April 2027.
 
 Wisdom: eight reflection questions plus eight well-known Uzbek proverbs, shown with "Draft – needs source review" until a reviewer signs them off.

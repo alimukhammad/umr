@@ -5,9 +5,10 @@ import { uzLatn } from '../locales/uz-Latn';
 // Locale codes follow Technical requirements: never a bare 'uz', so 'uz-Cyrl' can be added cleanly.
 export type Locale = 'uz-Latn' | 'ru' | 'en';
 export const LOCALES: Locale[] = ['uz-Latn', 'ru', 'en'];
+export const DEFAULT_LOCALE: Locale = 'uz-Latn';
 export const dicts: Record<Locale, Dict> = { 'uz-Latn': uzLatn, ru, en };
 
-/** First language from the browser (later: Telegram's language_code). 'uz' is treated as 'uz-Latn'. */
+/** Language from the browser (later: Telegram's language_code). Not used at launch: Uzbek Latin is the default. */
 export function detectLocale(langs: readonly string[] = navigator.languages ?? [navigator.language]): Locale {
   for (const raw of langs) {
     const l = raw.toLowerCase();

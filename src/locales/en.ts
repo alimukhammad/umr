@@ -103,7 +103,7 @@ export const en = {
     title: 'Need to talk?',
     message: 'You don’t have to carry everything alone. Talking to someone can help, whenever you are ready.',
     danger: 'If you or someone near you is in danger now, call 103.',
-    abroad: 'Outside Uzbekistan? Call your local emergency number.',
+    abroad: 'Umr is for people in Uzbekistan for now, so these are Uzbek numbers.',
     unverified: 'Unverified – for testing only. These numbers come from published lists and have not yet been confirmed by phone.',
     call: 'Call',
     hoursUnknown: 'Hours not confirmed',

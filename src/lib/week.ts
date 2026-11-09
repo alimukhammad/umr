@@ -43,12 +43,14 @@ export function toISO(ms: number) {
   return new Date(ms).toISOString().slice(0, 10);
 }
 
-/** Today's date in the device's own timezone, as 'YYYY-MM-DD'. */
-export function localTodayISO(now = new Date()) {
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, '0');
-  const d = String(now.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
+/**
+ * Today's date in Tashkent, as 'YYYY-MM-DD'. Umr launches for people in Uzbekistan,
+ * so weeks roll over at midnight Tashkent time whatever the phone's own time zone.
+ * Uzbekistan is UTC+5 all year (no daylight saving), so a fixed offset is exact.
+ */
+export const TASHKENT_OFFSET_MS = 5 * 3_600_000;
+export function tashkentTodayISO(now = new Date()) {
+  return new Date(now.getTime() + TASHKENT_OFFSET_MS).toISOString().slice(0, 10);
 }
 
 /** Open weeks = horizon × 52 − index − 1. Null once someone outlives the horizon. */

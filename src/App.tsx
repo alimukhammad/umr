@@ -8,9 +8,9 @@ import { SupportSheet } from './components/SupportSheet';
 import { YearView } from './components/YearView';
 import { AppCtx, prefersReducedMotion, type Ctx, type Overlay } from './lib/app-context';
 import { PALETTES } from './lib/grid';
-import { detectLocale, dicts } from './lib/i18n';
+import { DEFAULT_LOCALE, dicts } from './lib/i18n';
 import { clearAll, initialState, load, save, type State } from './lib/store';
-import { lifeWeek, localTodayISO } from './lib/week';
+import { lifeWeek, tashkentTodayISO } from './lib/week';
 
 type Phase = 'welcome' | 'birth' | 'adults' | 'reveal' | 'home' | 'edit-birth';
 
@@ -43,10 +43,11 @@ export default function App() {
   });
   const [revealDone, setRevealDone] = useState(false);
   const [stack, setStack] = useState<Overlay[]>([]);
-  const [today, setToday] = useState(localTodayISO);
+  const [today, setToday] = useState(tashkentTodayISO);
   const historyOk = useRef(true);
 
-  const locale = state.locale ?? detectLocale();
+  // Uzbek Latin first, whatever the browser's language. Russian and English stay one tap away.
+  const locale = state.locale ?? DEFAULT_LOCALE;
   const t = dicts[locale];
   const systemDark = useSystemDark();
   const themeName = state.theme === 'auto' ? (systemDark ? 'dark' : 'light') : state.theme;
@@ -71,7 +72,7 @@ export default function App() {
 
   // Roll over to a new week while the app stays open.
   useEffect(() => {
-    const tick = () => setToday(localTodayISO());
+    const tick = () => setToday(tashkentTodayISO());
     document.addEventListener('visibilitychange', tick);
     const id = window.setInterval(tick, 60_000);
     return () => {
