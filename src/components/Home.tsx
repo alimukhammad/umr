@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { prefersReducedMotion, useApp } from '../lib/app-context';
 import { fill, fmtNum } from '../lib/i18n';
 import { openWeeks } from '../lib/week';
+import { remindersEnabled } from '../lib/reminders';
 import { wisdomForWeek } from '../lib/wisdom';
 import { GridCanvas } from './GridCanvas';
 import { Mark } from './Mark';
@@ -101,6 +102,11 @@ export function Home({ revealing, revealDone, onRevealDone, onContinue }: { reve
                 <p className="quiet small">
                   {t.grid.proverb} · <span className="draft">{t.grid.draft}</span>
                 </p>
+              )}
+              {remindersEnabled() && !state.reminder && (
+                <button className="link small" onClick={() => open({ kind: 'settings' })}>
+                  {t.grid.emailLink} →
+                </button>
               )}
             </figure>
 

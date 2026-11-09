@@ -1,14 +1,14 @@
-# Umr — MVP (guest test version)
+# Umr
 
-Umr (Uzbek for "life") shows a person's life as a woven grid of weeks. This is the **guest MVP** for the five Phase 0 user interviews: no server, no account, everything saved in the visitor's own browser.
+Umr (Uzbek for "life") shows a person's life as a woven grid of weeks. Live at **https://umr.grader.uz** once hosting is set up (below).
 
-Built from the Umr product documents (PRD, Technical requirements, Webapp flow, Design brief).
+**Umr has no server.** The birth date, notes and milestones stay in the visitor's own browser. The only thing that leaves the phone is an email address, if someone asks for the weekly email; a Google Apps Script handles that (see [`apps-script/`](apps-script/README.md)).
 
 ## What's in it
 
 | Screen | Status |
 | --- | --- |
-| S1 Welcome, language choice | ✅ |
+| S1 Welcome, language choice (Uzbek Latin first) | ✅ |
 | S2 Birth date, with checks for future dates, over 110 years and 31 Feb | ✅ |
 | S13 Adults only (under 18: nothing stored) | ✅ |
 | S3 Woven reveal (2 s, no prompt during it, reduced motion respected) | ✅ |
@@ -16,51 +16,62 @@ Built from the Umr product documents (PRD, Technical requirements, Webapp flow, 
 | S5 Year view: 7 × 7 + 3 targets of 44 px+, dates, previous/next year | ✅ |
 | S6 Week sheet: private note (1,000 characters, autosaved), milestones | ✅ |
 | S7 Milestone form: title, six kinds, date | ✅ |
+| S9 Weekly reflection by email: email + consent, double opt-in, Sunday 20:00 Tashkent | ✅ Needs the Apps Script deployed |
 | S10 Share image, 1080 × 1920, made on the device, no name/date/notes | ✅ |
-| S11 Settings: language, theme, horizon 75–100, birth date, JSON export, delete everything | ✅ |
+| S11 Settings: language, theme, horizon 75–100, birth date, email, download and restore a backup file, delete everything | ✅ |
 | S12 Support: all five listed numbers, **labelled unverified, for testing only** | ⚠️ Verify before launch |
-| S8 Keep your grid (Telegram sign-in + consent) | ⏳ Needs server |
-| S9 Weekly reflection in Telegram | ⏳ Needs server and bot |
+| S8 Accounts and sync across devices | Not planned for now (no server) |
 
 Audience: people in Uzbekistan at launch. Uzbek Latin is the default whatever the browser language, and weeks roll over at midnight Tashkent time (UTC+5).
 
 Languages: Uzbek Latin, Russian, English — **draft copy**, needs native review. Uzbek uses the current alphabet with ʻ (U+02BB); convert before 22 April 2027.
 
-Wisdom: eight reflection questions plus eight well-known Uzbek proverbs, shown with "Draft – needs source review" until a reviewer signs them off.
+Wisdom: eight reflection questions plus eight well-known Uzbek proverbs, shown with "Draft – needs source review" until a reviewer signs them off. The weekly email uses the questions only.
 
 ## Run it
 
 ```bash
 npm install
-npm run dev          # local development
-npm test             # unit tests for the week function (cases from Technical requirements)
-npm run build        # static site in dist/ (for Caddy)
-npm run build:single # one self-contained dist-single/index.html for a shareable test link
+cp .env.example .env   # optional: paste the Apps Script web app URL to show the email sign-up
+npm run dev            # local development
+npm test               # week function, backup import, and the Apps Script run against fake Google services
+npm run build          # static site in dist/
+npm run build:single   # one self-contained dist-single/index.html for a shareable test link
 ```
+
+## Put it online at umr.grader.uz (one time, about 10 minutes)
+
+Every push to `main` builds, tests and publishes the site through GitHub Pages (`.github/workflows/deploy.yml`).
+
+1. **GitHub:** in this repo, open **Settings → Pages** and set **Source** to **GitHub Actions**.
+2. **DNS:** where grader.uz's DNS is managed, add a record: type `CNAME`, name `umr`, value `alimukhammad.github.io`.
+3. **Domain:** back in **Settings → Pages**, enter `umr.grader.uz` as the custom domain, wait for the DNS check, then tick **Enforce HTTPS**. The `public/CNAME` file keeps this setting on every deploy.
+4. **Email sign-up:** after deploying the Apps Script, open **Settings → Secrets and variables → Actions → Variables**, add `VITE_REMINDER_ENDPOINT` with the web app URL, then re-run the deploy workflow. Until then the app says "Coming soon" where the sign-up would be.
 
 ## Structure
 
 ```
-src/lib/week.ts       the one week function + tests (lifeWeek, weekRange, openWeeks, birth checks)
-src/lib/grid.ts       canvas drawing shared by the grid and the share image; Design brief palettes
-src/lib/store.ts      guest storage (localStorage), JSON export shaped like GET /me/export
-src/lib/i18n.ts       locale detection (uz → uz-Latn), date formatting with Uzbek month names
-src/lib/wisdom.ts     reflection questions and draft proverbs
-src/lib/support.ts    support contacts (ALL UNVERIFIED)
-src/locales/          en, ru, uz-Latn copy
-src/components/       screens
-src/fonts.css         self-hosted Noto Sans/Serif, woff2, split Latin / Latin Ext / Cyrillic
+src/lib/week.ts         the one week function + tests (lifeWeek, weekRange, openWeeks, birth checks, Tashkent today)
+src/lib/grid.ts         canvas drawing shared by the grid and the share image; Design brief palettes
+src/lib/store.ts        browser storage, JSON backup export and import
+src/lib/reminders.ts    email sign-up call to the Apps Script
+src/lib/i18n.ts         languages, date formatting with Uzbek month names
+src/lib/wisdom.ts       reflection questions and draft proverbs
+src/lib/support.ts      support contacts (ALL UNVERIFIED)
+src/locales/            en, ru, uz-Latn copy
+src/components/         screens
+src/fonts.css           self-hosted Noto Sans/Serif, woff2, split Latin / Latin Ext / Cyrillic
+apps-script/            the Google Apps Script for weekly emails, its setup guide and tests
 ```
 
 ## Budgets (from Technical requirements)
 
-- JavaScript: about 85 KB gzipped (target under 150 KB) ✅
+- JavaScript: about 88 KB gzipped (target under 150 KB) ✅
 - Fonts: about 70 KB for Latin + Cyrillic (target under 100 KB) ✅. Latin Extended loads only for the 2027 letters.
 - No third-party analytics, trackers or CDNs.
 
-## Moving to the full build
+## Limits of the no-server setup
 
-- Notes and milestone titles move to the server, encrypted (AES-256-GCM), per Backend schema.
-- `exportJSON` already matches the planned `/me/export` shape.
-- Translations live in plain TS objects; swap to i18next when Russian plural forms are needed.
-- Before any real user data: Gate 3 (safety review, legal steps, restore rehearsal).
+- Notes live in one browser. A new phone or a cleared browser loses them unless the person restores a downloaded backup file.
+- Free Gmail sends to 100 recipients a day, so Sunday emails spill into Monday and later past about 90 subscribers. Move to Google Workspace (1,500 a day) before launch.
+- If accounts or sync are wanted later, the server design in the product documents still applies; `exportJSON` already matches its planned `/me/export` shape.

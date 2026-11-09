@@ -222,3 +222,11 @@ canvas.tappable { cursor: pointer; touch-action: manipulation; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* Email sign-up and backup */
+.stack-sm { display: flex; flex-direction: column; gap: 10px; }
+.check { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+.check input { width: 22px; height: 22px; margin: 2px 0 0; flex: 0 0 auto; accent-color: var(--lived); }
+.file-btn { position: relative; overflow: hidden; }
+.file-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.set .btn { align-self: flex-start; }

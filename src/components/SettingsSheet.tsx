@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useApp } from '../lib/app-context';
 import { dicts, fill, fmtDate, LOCALES } from '../lib/i18n';
-import { exportJSON, hasPersonalEntries, type ThemePref } from '../lib/store';
+import { exportJSON, hasPersonalEntries, parseImport, type ThemePref } from '../lib/store';
 import { saveFile } from '../lib/files';
+import { EmailReminders } from './EmailReminders';
 import { Sheet } from './Sheet';
 
 /** S11 Settings: language, theme, grid length, birth date, data export and deletion. */
@@ -13,6 +14,17 @@ export function SettingsSheet({ onChangeBirth }: { onChangeBirth: () => void }) 
   const [y, m, d] = state.birth!.split('-').map(Number);
 
   const download = () => void saveFile('umr-data.json', exportJSON(state));
+  const [importMsg, setImportMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
+  const restore = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    const data = file.size < 2_000_000 ? parseImport(await file.text()) : null;
+    if (!data) return setImportMsg({ ok: false, text: t.settings.importError });
+    update((s) => ({ ...s, birth: data.birth, horizon: data.horizon, locale: data.locale ?? s.locale, notes: data.notes, milestones: data.milestones }));
+    setImportMsg({ ok: true, text: t.settings.importDone });
+  };
 
   const themes: [ThemePref, string][] = [
     ['auto', t.settings.themeAuto],
@@ -68,7 +80,7 @@ export function SettingsSheet({ onChangeBirth }: { onChangeBirth: () => void }) 
 
       <section className="set">
         <h3 className="label">{t.settings.reminders}</h3>
-        <p className="quiet small">{t.settings.remindersSoon}</p>
+        <EmailReminders />
       </section>
 
       <section className="set">
@@ -82,6 +94,13 @@ export function SettingsSheet({ onChangeBirth }: { onChangeBirth: () => void }) 
         <button className="btn" onClick={download}>
           {t.settings.export}
         </button>
+        <label className="btn file-btn">
+          {t.settings.importLabel}
+          <input type="file" accept="application/json,.json" onChange={restore} />
+        </label>
+        <p className={importMsg && !importMsg.ok ? 'error small' : 'quiet small'} role="status">
+          {importMsg ? importMsg.text : t.settings.importHint}
+        </p>
         <div className="danger-zone">
           <h4>{t.settings.deleteTitle}</h4>
           <p className="quiet small">{fill(t.settings.deleteHint, { word: t.settings.deleteWord })}</p>
