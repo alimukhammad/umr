@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useApp } from '../lib/app-context';
 import { dicts, fill, fmtDate, LOCALES } from '../lib/i18n';
 import { exportJSON, hasPersonalEntries, type ThemePref } from '../lib/store';
+import { saveFile } from '../lib/files';
 import { Sheet } from './Sheet';
 
 /** S11 Settings: language, theme, grid length, birth date, data export and deletion. */
@@ -11,17 +12,7 @@ export function SettingsSheet({ onChangeBirth }: { onChangeBirth: () => void }) 
   const locked = hasPersonalEntries(state);
   const [y, m, d] = state.birth!.split('-').map(Number);
 
-  const download = () => {
-    const blob = new Blob([exportJSON(state)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'umr-data.json';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  };
+  const download = () => void saveFile('umr-data.json', exportJSON(state));
 
   const themes: [ThemePref, string][] = [
     ['auto', t.settings.themeAuto],

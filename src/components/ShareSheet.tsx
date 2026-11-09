@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useApp } from '../lib/app-context';
 import { computeLayout, drawGrid } from '../lib/grid';
+import { saveFile } from '../lib/files';
 import { Sheet } from './Sheet';
 
 const W = 1080;
@@ -82,10 +83,10 @@ export function ShareSheet() {
       <p className="quiet small">{t.share.note}</p>
       <div className="share-preview">{url ? <img src={url} alt={t.share.line} /> : <div className="share-placeholder" />}</div>
       <div className="row-btns">
-        {url && (
-          <a className="btn" href={url} download="umr-life-in-weeks.png">
+        {blob && (
+          <button className="btn" onClick={() => void saveFile('umr-life-in-weeks.png', blob)}>
             {t.share.save}
-          </a>
+          </button>
         )}
         {canShare && (
           <button className="btn primary" onClick={() => navigator.share({ files: [file!] }).catch(() => {})}>
