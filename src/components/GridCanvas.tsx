@@ -13,9 +13,10 @@ type Props = {
   onRevealDone?: () => void;
   onRow?: (age: number) => void;
   label: string; // text summary for screen readers
+  pins?: Map<number, CanvasImageSource>;
 };
 
-export function GridCanvas({ rows, current, milestones, palette, reveal, pulse, onRevealDone, onRow, label }: Props) {
+export function GridCanvas({ rows, current, milestones, palette, reveal, pulse, onRevealDone, onRow, label, pins }: Props) {
   const wrap = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const [width, setWidth] = useState(0);
@@ -88,8 +89,8 @@ export function GridCanvas({ rows, current, milestones, palette, reveal, pulse, 
     if (!ctx) return;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, L.width, L.height);
-    drawGrid(ctx, L, { current, milestones, palette, progress, ring, fontFamily: FONT });
-  }, [L, current, milestones, palette, progress, ring]);
+    drawGrid(ctx, L, { current, milestones, palette, progress, ring, fontFamily: FONT, pins });
+  }, [L, current, milestones, palette, progress, ring, pins]);
 
   const onClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!onRow || !L) return;

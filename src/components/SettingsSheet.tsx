@@ -4,6 +4,7 @@ import { dicts, fill, fmtDate, LOCALES } from '../lib/i18n';
 import { exportJSON, hasPersonalEntries, parseImport, type ThemePref } from '../lib/store';
 import { saveFile } from '../lib/files';
 import { EmailReminders } from './EmailReminders';
+import { LifeEmojiSettings } from './LifeEmojiSettings';
 import { Sheet } from './Sheet';
 
 /** S11 Settings: language, theme, grid length, birth date, data export and deletion. */
@@ -22,7 +23,7 @@ export function SettingsSheet({ onChangeBirth }: { onChangeBirth: () => void }) 
     if (!file) return;
     const data = file.size < 2_000_000 ? parseImport(await file.text()) : null;
     if (!data) return setImportMsg({ ok: false, text: t.settings.importError });
-    update((s) => ({ ...s, birth: data.birth, horizon: data.horizon, locale: data.locale ?? s.locale, notes: data.notes, milestones: data.milestones }));
+    update((s) => ({ ...s, birth: data.birth, horizon: data.horizon, locale: data.locale ?? s.locale, notes: data.notes, milestones: data.milestones, lifeEmojiCode: data.lifeEmojiCode ?? s.lifeEmojiCode }));
     setImportMsg({ ok: true, text: t.settings.importDone });
   };
 
@@ -81,6 +82,11 @@ export function SettingsSheet({ onChangeBirth }: { onChangeBirth: () => void }) 
       <section className="set">
         <h3 className="label">{t.settings.reminders}</h3>
         <EmailReminders />
+      </section>
+
+      <section className="set">
+        <h3 className="label">{t.emoji.settingsTitle}</h3>
+        <LifeEmojiSettings />
       </section>
 
       <section className="set">

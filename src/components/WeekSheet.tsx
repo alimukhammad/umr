@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { EMOJI_KEYS, emojiAllowed, emojiUrl, FREE_EMOJI, type EmojiKey } from '../lib/emoji';
 import { useApp } from '../lib/app-context';
 import { fill, fmtDate } from '../lib/i18n';
 import { CATEGORIES, newId, type Category } from '../lib/store';
@@ -9,7 +10,7 @@ const NOTE_MAX = 1000;
 
 /** S6 Week sheet: dates, one private note, milestones. */
 export function WeekSheet({ index }: { index: number }) {
-  const { state, update, t, locale, open } = useApp();
+  const { state, update, t, locale, open, unlocked } = useApp();
   const birth = state.birth!;
   const age = Math.floor(index / 52);
   const n = (index % 52) + 1;
@@ -63,7 +64,11 @@ export function WeekSheet({ index }: { index: number }) {
         <ul className="ms-list">
           {list.map((m) => (
             <li key={m.id}>
-              <span className="diamond" aria-hidden="true" />
+              {m.emoji && emojiAllowed(m.emoji, unlocked) ? (
+                <img src={emojiUrl(m.emoji)} alt={t.emoji.names[m.emoji]} width={22} height={22} />
+              ) : (
+                <span className="diamond" aria-hidden="true" />
+              )}
               <span className="grow">
                 <strong>{m.title}</strong>
                 <span className="quiet small"> · {t.milestone.categories[m.category]}</span>
@@ -84,9 +89,18 @@ export function WeekSheet({ index }: { index: number }) {
 
 /** S7 Milestone form: title, kind and date. The date decides the week. */
 export function MilestoneForm({ index }: { index: number }) {
-  const { state, update, t, close } = useApp();
+  const { state, update, t, close, open, unlocked } = useApp();
   const birth = state.birth!;
   const [title, setTitle] = useState('');
+  const [emoji, setEmoji] = useState<EmojiKey | null>(null);
+  const [wanted, setWanted] = useState<EmojiKey | null>(null);
+  // After an unlock, the emoji the person tapped is chosen for them.
+  useEffect(() => {
+    if (unlocked && wanted) {
+      setEmoji(wanted);
+      setWanted(null);
+    }
+  }, [unlocked, wanted]);
   const [category, setCategory] = useState<Category>('family');
   const [date, setDate] = useState(toISO(weekRange(birth, index).start));
   const [err, setErr] = useState<string | null>(null);
@@ -99,7 +113,18 @@ export function MilestoneForm({ index }: { index: number }) {
     if (week < 0 || week > MAX_LIFE_WEEK) return setErr(t.milestone.errDate);
     update((s) => ({
       ...s,
-      milestones: [...s.milestones, { id: newId(), week, date, title: title.trim().slice(0, 120), category, createdAt: new Date().toISOString() }],
+      milestones: [
+        ...s.milestones,
+        {
+          id: newId(),
+          week,
+          date,
+          title: title.trim().slice(0, 120),
+          category,
+          createdAt: new Date().toISOString(),
+          ...(emoji && emojiAllowed(emoji, unlocked) ? { emoji } : {}),
+        },
+      ],
     }));
     close();
   };
@@ -111,6 +136,35 @@ export function MilestoneForm({ index }: { index: number }) {
           <span className="label">{t.milestone.name}</span>
           <input value={title} maxLength={120} placeholder={t.milestone.namePlaceholder} onChange={(e) => (setTitle(e.target.value), setErr(null))} />
         </label>
+        <fieldset className="field">
+          <legend className="label">{t.emoji.label}</legend>
+          <div className="emoji-row">
+            {EMOJI_KEYS.map((k) => {
+              const ok = emojiAllowed(k, unlocked);
+              const on = emoji === k;
+              return (
+                <button
+                  type="button"
+                  key={k}
+                  className={'emoji-btn' + (on ? ' on' : '') + (ok ? '' : ' locked')}
+                  aria-pressed={on}
+                  aria-label={`${t.emoji.names[k]}${FREE_EMOJI.has(k) ? ', ' + t.emoji.free : ok ? '' : ', ' + t.emoji.locked}`}
+                  title={t.emoji.names[k]}
+                  onClick={() => {
+                    if (ok) return setEmoji(on ? null : k);
+                    // A paid emoji opens the offer. Closing it leaves a plain milestone, with no follow-up.
+                    const w = /^\d{4}-\d{2}-\d{2}$/.test(date) && date >= birth ? lifeWeek(birth, date).index : index;
+                    setWanted(k);
+                    open({ kind: 'unlock', emoji: k, week: w });
+                  }}
+                >
+                  <img src={emojiUrl(k)} alt="" width={28} height={28} />
+                  {!ok && <span className="lock" aria-hidden="true">🔒</span>}
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
         <fieldset className="field">
           <legend className="label">{t.milestone.category}</legend>
           <div className="chips">

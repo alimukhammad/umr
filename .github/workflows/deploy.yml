@@ -30,6 +30,10 @@ jobs:
         env:
           # Set under Settings → Secrets and variables → Actions → Variables.
           VITE_REMINDER_ENDPOINT: ${{ vars.VITE_REMINDER_ENDPOINT }}
+          VITE_PAYMENT_URL: ${{ vars.VITE_PAYMENT_URL }}
+          VITE_ORDER_EMAIL: ${{ vars.VITE_ORDER_EMAIL }}
+          VITE_ORDER_TELEGRAM: ${{ vars.VITE_ORDER_TELEGRAM }}
+          VITE_EMOJI_PRICE_UZS: ${{ vars.VITE_EMOJI_PRICE_UZS }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

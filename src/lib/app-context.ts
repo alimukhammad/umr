@@ -1,5 +1,6 @@
 import { createContext, useContext } from 'react';
 import type { Dict } from '../locales/en';
+import type { EmojiKey } from './emoji';
 import type { Palette } from './grid';
 import type { Locale } from './i18n';
 import type { State } from './store';
@@ -10,7 +11,8 @@ export type Overlay =
   | { kind: 'milestone'; index: number }
   | { kind: 'share' }
   | { kind: 'settings' }
-  | { kind: 'support' };
+  | { kind: 'support' }
+  | { kind: 'unlock'; emoji: EmojiKey; week: number };
 
 export type Ctx = {
   state: State;
@@ -21,6 +23,8 @@ export type Ctx = {
   today: string;
   current: number; // this week's life index
   age: number;
+  /** Life Emoji unlocked on this phone. */
+  unlocked: boolean;
   open: (o: Overlay) => void;
   close: () => void;
   replace: (o: Overlay) => void;

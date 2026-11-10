@@ -8,7 +8,8 @@
     "build": "tsc --noEmit && vite build",
     "build:single": "tsc --noEmit && vite build --mode single",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "unlock:code": "node tools/make-unlock-code.mjs"
   },
   "dependencies": {
     "@fontsource/noto-sans": "^5.3.0",

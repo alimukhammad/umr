@@ -1,11 +1,13 @@
 import { useEffect } from 'react';
 import { useApp } from '../lib/app-context';
 import { fill, fmtDate } from '../lib/i18n';
+import { emojiByWeek, emojiUrl } from '../lib/emoji';
 import { weekRange } from '../lib/week';
 
 /** S5 Year view: one row enlarged to 52 tappable weeks, 7 rows of 7 plus 3, with dates. */
 export function YearView({ age }: { age: number }) {
-  const { state, t, locale, current, open, close, replace } = useApp();
+  const { state, t, locale, current, open, close, replace, unlocked } = useApp();
+  const byWeek = emojiByWeek(state.milestones, unlocked);
   const birth = state.birth!;
   const rows = Math.max(state.horizon, Math.floor(current / 52) + 1);
   const first = weekRange(birth, age * 52).start;
@@ -57,8 +59,12 @@ export function YearView({ age }: { age: number }) {
                     aria-current={i === current ? 'date' : undefined}
                   >
                     <span className="wn">{w + 1}</span>
-                    <span className="wd">{fmtDate(start, locale, true)}</span>
-                    {isMs && <span className="diamond" aria-hidden="true" />}
+                    {byWeek.has(i) ? (
+                      <img className="wk-emoji" src={emojiUrl(byWeek.get(i)!)} alt={t.emoji.names[byWeek.get(i)!]} width={24} height={24} />
+                    ) : (
+                      <span className="wd">{fmtDate(start, locale, true)}</span>
+                    )}
+                    {isMs && !byWeek.has(i) && <span className="diamond" aria-hidden="true" />}
                     {hasNote && <span className="dot" aria-hidden="true" />}
                   </button>
                 </li>

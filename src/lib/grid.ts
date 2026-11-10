@@ -71,7 +71,13 @@ export type DrawOpts = {
   fontFamily?: string;
   showAverage?: boolean;
   labelSize?: number;
+  /** Week → emoji image, drawn as a pin on a background-coloured disc. */
+  pins?: Map<number, CanvasImageSource>;
+  /** Pin size in CSS px. Design brief: 7 on phones, 11 on desktop, 40 on the share image. */
+  pinSize?: number;
 };
+
+export const pinSizeFor = (L: Layout) => (L.pitch >= 10 ? 11 : 7);
 
 export function drawGrid(ctx: CanvasRenderingContext2D, L: Layout, o: DrawOpts) {
   const { palette: P, current } = o;
@@ -115,7 +121,23 @@ export function drawGrid(ctx: CanvasRenderingContext2D, L: Layout, o: DrawOpts) 
     ctx.globalAlpha = 1;
   }
 
-  // Ring around this week: always drawn last, above everything.
+  // Emoji pins sit above the cells. Too big for a cell, so each sits on a small disc.
+  if (o.pins && o.pins.size && progress >= L.rows) {
+    const size = o.pinSize ?? pinSizeFor(L);
+    for (const [i, img] of o.pins) {
+      const r = Math.floor(i / 52);
+      if (r >= L.rows) continue;
+      const cx = colX(L, i % 52) + L.cell / 2;
+      const cy = rowY(L, r) + L.cell / 2;
+      ctx.fillStyle = P.bg;
+      ctx.beginPath();
+      ctx.arc(cx, cy, size * 0.62, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.drawImage(img, cx - size / 2, cy - size / 2, size, size);
+    }
+  }
+
+  // Ring around this week: always drawn last, above everything (including emoji).
   if (current < L.rows * 52 && progress * 52 > current) {
     const cx = colX(L, current % 52) + L.cell / 2;
     const cy = rowY(L, Math.floor(current / 52)) + L.cell / 2;

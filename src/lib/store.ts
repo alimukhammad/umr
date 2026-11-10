@@ -1,3 +1,4 @@
+import { isEmojiKey, type EmojiKey } from './emoji';
 import type { Locale } from './i18n';
 
 // Guest storage. In the MVP everything lives in this browser only (Webapp flow: "Guest: no server call").
@@ -6,7 +7,7 @@ import type { Locale } from './i18n';
 export type Category = 'family' | 'study' | 'work' | 'travel' | 'loss' | 'other';
 export const CATEGORIES: Category[] = ['family', 'study', 'work', 'travel', 'loss', 'other'];
 
-export type Milestone = { id: string; week: number; date: string; title: string; category: Category; createdAt: string };
+export type Milestone = { id: string; week: number; date: string; title: string; category: Category; createdAt: string; emoji?: EmojiKey };
 export type Note = { text: string; updatedAt: string };
 export type ThemePref = 'auto' | 'light' | 'dark';
 
@@ -21,6 +22,8 @@ export type State = {
   milestones: Milestone[];
   /** Last email this phone asked to receive reminders at. The address itself lives in the Google Sheet. */
   reminder: { email: string; requestedAt: string } | null;
+  /** A verified Life Emoji unlock code, kept so a backup file can restore it. */
+  lifeEmojiCode: string | null;
 };
 
 const KEY = 'umr.v1';
@@ -35,6 +38,7 @@ export const initialState = (): State => ({
   notes: {},
   milestones: [],
   reminder: null,
+  lifeEmojiCode: null,
 });
 
 export function load(): State {
@@ -89,7 +93,8 @@ export function exportJSON(s: State) {
       week_notes: Object.entries(s.notes)
         .filter(([, n]) => n.text.trim() !== '')
         .map(([w, n]) => ({ life_week: Number(w), text: n.text, updated_at: n.updatedAt })),
-      milestones: s.milestones.map((m) => ({ life_week: m.week, date: m.date, title: m.title, category: m.category, created_at: m.createdAt })),
+      milestones: s.milestones.map((m) => ({ life_week: m.week, date: m.date, title: m.title, category: m.category, emoji_key: m.emoji ?? null, created_at: m.createdAt })),
+      life_emoji_code: s.lifeEmojiCode,
     },
     null,
     2,
@@ -97,7 +102,7 @@ export function exportJSON(s: State) {
 }
 
 /** Reads a file made by exportJSON. Returns null if it isn't one. */
-export function parseImport(text: string): Pick<State, 'birth' | 'horizon' | 'notes' | 'milestones'> & { locale: Locale | null } | null {
+export function parseImport(text: string): (Pick<State, 'birth' | 'horizon' | 'notes' | 'milestones'> & { locale: Locale | null; lifeEmojiCode: string | null }) | null {
   let d: Record<string, unknown>;
   try {
     d = JSON.parse(text);
@@ -123,8 +128,17 @@ export function parseImport(text: string): Pick<State, 'birth' | 'horizon' | 'no
       const w = Number(m?.life_week);
       const cat = CATEGORIES.includes(m?.category as Category) ? (m.category as Category) : 'other';
       if (!Number.isInteger(w) || w < 0 || w > 5719 || typeof m.title !== 'string' || typeof m.date !== 'string') return null;
-      milestones.push({ id: newId(), week: w, date: m.date, title: m.title.slice(0, 120), category: cat, createdAt: typeof m.created_at === 'string' ? m.created_at : new Date().toISOString() });
+      milestones.push({
+        id: newId(),
+        week: w,
+        date: m.date,
+        title: m.title.slice(0, 120),
+        category: cat,
+        createdAt: typeof m.created_at === 'string' ? m.created_at : new Date().toISOString(),
+        ...(isEmojiKey(m.emoji_key) ? { emoji: m.emoji_key } : {}),
+      });
     }
   }
-  return { birth, horizon, locale, notes, milestones };
+  const lifeEmojiCode = typeof d.life_emoji_code === 'string' ? d.life_emoji_code.slice(0, 200) : null;
+  return { birth, horizon, locale, notes, milestones, lifeEmojiCode };
 }

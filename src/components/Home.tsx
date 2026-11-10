@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { prefersReducedMotion, useApp } from '../lib/app-context';
 import { fill, fmtNum } from '../lib/i18n';
 import { openWeeks } from '../lib/week';
+import { emojiByWeek, pinImages, useEmojiImages } from '../lib/emoji';
 import { remindersEnabled } from '../lib/reminders';
 import { wisdomForWeek } from '../lib/wisdom';
 import { GridCanvas } from './GridCanvas';
@@ -9,7 +10,9 @@ import { Mark } from './Mark';
 
 /** S3 Grid reveal and S4 Grid home share this screen. */
 export function Home({ revealing, revealDone, onRevealDone, onContinue }: { revealing: boolean; revealDone: boolean; onRevealDone: () => void; onContinue: () => void }) {
-  const { state, t, locale, palette, current, age, open } = useApp();
+  const { state, t, locale, palette, current, age, open, unlocked } = useApp();
+  const imgs = useEmojiImages();
+  const pins = useMemo(() => pinImages(emojiByWeek(state.milestones, unlocked), imgs), [state.milestones, unlocked, imgs]);
   const rows = Math.max(state.horizon, age + 1);
   const milestones = useMemo(() => new Set(state.milestones.map((m) => m.week)), [state.milestones]);
   const ow = openWeeks(state.horizon, current);
@@ -51,6 +54,7 @@ export function Home({ revealing, revealDone, onRevealDone, onContinue }: { reve
             onRevealDone={onRevealDone}
             onRow={revealing ? undefined : (a) => open({ kind: 'year', age: a })}
             label={summary}
+            pins={pins}
           />
           {revealing && (
             <div className="reveal-cta">

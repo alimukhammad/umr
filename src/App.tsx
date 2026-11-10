@@ -5,6 +5,7 @@ import { MilestoneForm, WeekSheet } from './components/WeekSheet';
 import { SettingsSheet } from './components/SettingsSheet';
 import { ShareSheet } from './components/ShareSheet';
 import { SupportSheet } from './components/SupportSheet';
+import { UnlockSheet } from './components/UnlockSheet';
 import { YearView } from './components/YearView';
 import { AppCtx, prefersReducedMotion, type Ctx, type Overlay } from './lib/app-context';
 import { PALETTES } from './lib/grid';
@@ -120,7 +121,7 @@ export default function App() {
   const lw = state.birth ? lifeWeek(state.birth, today) : { age: 0, week: 0, index: 0 };
 
   const ctx: Ctx = useMemo(
-    () => ({ state, update, t, locale, palette, today, current: lw.index, age: lw.age, open, close, replace, resetAll }),
+    () => ({ state, update, t, locale, palette, today, current: lw.index, age: lw.age, unlocked: !!state.lifeEmojiCode, open, close, replace, resetAll }),
     [state, update, t, locale, palette, today, lw.index, lw.age, open, close, replace, resetAll],
   );
 
@@ -191,6 +192,8 @@ export default function App() {
               );
             case 'support':
               return <SupportSheet key={key} />;
+            case 'unlock':
+              return <UnlockSheet key={key} emoji={o.emoji} week={o.week} />;
           }
         })}
     </AppCtx.Provider>
