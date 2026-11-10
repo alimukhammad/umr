@@ -42,7 +42,8 @@ jobs:
           fi
       - name: Write keystore
         env:
-          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          # Either name works: the README's, or the one first added in GitHub.
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 || secrets.UMR_UPLOAD_KEYSTONE_BASE64 }}
         run: |
           if [ -z "$KEYSTORE_B64" ]; then
             echo "::warning::No ANDROID_KEYSTORE_BASE64 secret: building UNSIGNED (fine as a check, not for Google Play). See android/README.md."
@@ -52,11 +53,18 @@ jobs:
           echo "UMR_KEYSTORE_PATH=$RUNNER_TEMP/upload.keystore" >> "$GITHUB_ENV"
       - name: Build signed bundle and APK
         env:
-          UMR_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          UMR_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD || secrets.PASSWORD }}
           UMR_KEY_ALIAS: umr-upload
         run: |
           chmod +x gradlew
           ./gradlew --no-daemon bundleRelease assembleRelease
+      - name: Check the signature
+        if: env.UMR_KEYSTORE_PATH != ''
+        run: |
+          APKSIGNER=$(ls $ANDROID_HOME/build-tools/*/apksigner | sort -V | tail -1)
+          "$APKSIGNER" verify --print-certs app/build/outputs/apk/release/*.apk | grep -i "SHA-256"
+          echo "Expected upload key: BE:EA:88:BB:5A:09:34:E2:E6:F2:A6:57:CA:38:4C:1C:D3:23:81:EB:E3:65:5B:50:62:91:91:2D:FD:D1:2D:EC"
+          jarsigner -verify app/build/outputs/bundle/release/*.aab | tail -1
       - uses: actions/upload-artifact@v4
         with:
           name: umr-android
