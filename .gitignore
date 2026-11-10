@@ -6,3 +6,9 @@ dist-single
 .env
 .env.local
 *.pem
+android/.gradle
+android/app/build
+android/build
+android/local.properties
+*.keystore
+*.jks

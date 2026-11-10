@@ -3,6 +3,7 @@ import { prefersReducedMotion, useApp } from '../lib/app-context';
 import { fill, fmtNum } from '../lib/i18n';
 import { openWeeks } from '../lib/week';
 import { emojiByWeek, pinImages, useEmojiImages } from '../lib/emoji';
+import { useInstall } from '../lib/platform';
 import { remindersEnabled } from '../lib/reminders';
 import { wisdomForWeek } from '../lib/wisdom';
 import { GridCanvas } from './GridCanvas';
@@ -12,6 +13,7 @@ import { Mark } from './Mark';
 export function Home({ revealing, revealDone, onRevealDone, onContinue }: { revealing: boolean; revealDone: boolean; onRevealDone: () => void; onContinue: () => void }) {
   const { state, t, locale, palette, current, age, open, unlocked } = useApp();
   const imgs = useEmojiImages();
+  const { state: installState } = useInstall();
   const pins = useMemo(() => pinImages(emojiByWeek(state.milestones, unlocked), imgs), [state.milestones, unlocked, imgs]);
   const rows = Math.max(state.horizon, age + 1);
   const milestones = useMemo(() => new Set(state.milestones.map((m) => m.week)), [state.milestones]);
@@ -115,6 +117,11 @@ export function Home({ revealing, revealDone, onRevealDone, onContinue }: { reve
             </figure>
 
             <p className="quiet small hint">{t.grid.tapHint}</p>
+            {(installState === 'prompt' || installState === 'ios-steps') && (
+              <button className="link small" onClick={() => open({ kind: 'settings' })}>
+                {t.grid.installLink} →
+              </button>
+            )}
             <button className="link talk" onClick={() => open({ kind: 'support' })}>
               {t.grid.needTalk}
             </button>

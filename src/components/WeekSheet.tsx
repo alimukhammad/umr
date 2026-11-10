@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { EMOJI_KEYS, emojiAllowed, emojiUrl, FREE_EMOJI, type EmojiKey } from '../lib/emoji';
+import { IN_ANDROID_APP } from '../lib/platform';
 import { useApp } from '../lib/app-context';
 import { fill, fmtDate } from '../lib/i18n';
 import { CATEGORIES, newId, type Category } from '../lib/store';
@@ -139,7 +140,8 @@ export function MilestoneForm({ index }: { index: number }) {
         <fieldset className="field">
           <legend className="label">{t.emoji.label}</legend>
           <div className="emoji-row">
-            {EMOJI_KEYS.map((k) => {
+            {/* Inside the Google Play app, locked emoji aren't shown at all: no offer, no outside payment (Play rules). */}
+            {EMOJI_KEYS.filter((k) => !IN_ANDROID_APP || emojiAllowed(k, unlocked)).map((k) => {
               const ok = emojiAllowed(k, unlocked);
               const on = emoji === k;
               return (

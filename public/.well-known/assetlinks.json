@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "uz.umr.app",
+      "sha256_cert_fingerprints": [
+        "BE:EA:88:BB:5A:09:34:E2:E6:F2:A6:57:CA:38:4C:1C:D3:23:81:EB:E3:65:5B:50:62:91:91:2D:FD:D1:2D:EC"
+      ]
+    }
+  }
+]

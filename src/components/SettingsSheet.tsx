@@ -4,12 +4,14 @@ import { dicts, fill, fmtDate, LOCALES } from '../lib/i18n';
 import { exportJSON, hasPersonalEntries, parseImport, type ThemePref } from '../lib/store';
 import { saveFile } from '../lib/files';
 import { EmailReminders } from './EmailReminders';
+import { InstallSection } from './InstallSection';
+import { IN_ANDROID_APP } from '../lib/platform';
 import { LifeEmojiSettings } from './LifeEmojiSettings';
 import { Sheet } from './Sheet';
 
 /** S11 Settings: language, theme, grid length, birth date, data export and deletion. */
 export function SettingsSheet({ onChangeBirth }: { onChangeBirth: () => void }) {
-  const { state, update, t, locale, open, resetAll } = useApp();
+  const { state, update, t, locale, open, resetAll, unlocked } = useApp();
   const [confirm, setConfirm] = useState('');
   const locked = hasPersonalEntries(state);
   const [y, m, d] = state.birth!.split('-').map(Number);
@@ -80,14 +82,22 @@ export function SettingsSheet({ onChangeBirth }: { onChangeBirth: () => void }) 
       </section>
 
       <section className="set">
+        <h3 className="label">{t.settings.install}</h3>
+        <InstallSection />
+      </section>
+
+      <section className="set">
         <h3 className="label">{t.settings.reminders}</h3>
         <EmailReminders />
       </section>
 
-      <section className="set">
-        <h3 className="label">{t.emoji.settingsTitle}</h3>
-        <LifeEmojiSettings />
-      </section>
+      {/* Inside the Google Play app, no code entry unless already unlocked (Play rules on outside purchases). */}
+      {(!IN_ANDROID_APP || unlocked) && (
+        <section className="set">
+          <h3 className="label">{t.emoji.settingsTitle}</h3>
+          <LifeEmojiSettings />
+        </section>
+      )}
 
       <section className="set">
         <button className="link" onClick={() => open({ kind: 'support' })}>
