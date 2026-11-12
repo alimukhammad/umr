@@ -39,3 +39,33 @@ export function wisdomForWeek(lifeWeekIndex: number): WisdomItem {
   const i = Math.floor(lifeWeekIndex / 2);
   return lifeWeekIndex % 2 === 0 ? QUESTIONS[i % QUESTIONS.length] : PROVERBS[i % PROVERBS.length];
 }
+
+// ---- The week's question, shared with the Sunday email ---------------------------------------
+// Same rules as apps-script/Code.gs, so the app and the email always show the same question:
+// a new week starts every Sunday at 20:00 Tashkent time (UTC+5, no daylight saving).
+
+const TZ_OFFSET_MS = 5 * 3_600_000;
+const SEND_HOUR = 20;
+
+/** The week's key: the date of its Sunday, e.g. '2026-11-08'. */
+export function emailWeekKey(now: Date): string {
+  const tz = new Date(now.getTime() + TZ_OFFSET_MS);
+  let boundary = Date.UTC(tz.getUTCFullYear(), tz.getUTCMonth(), tz.getUTCDate() - tz.getUTCDay(), SEND_HOUR);
+  if (boundary > tz.getTime()) boundary -= 7 * 86_400_000;
+  return new Date(boundary).toISOString().slice(0, 10);
+}
+
+/** Whole weeks since Sunday 4 Jan 2026. */
+export function emailWeekIndex(weekKey: string): number {
+  const d = Date.parse(weekKey + 'T00:00:00Z');
+  return Math.max(0, Math.round((d - Date.UTC(2026, 0, 4)) / (7 * 86_400_000)));
+}
+
+export function questionOfTheWeek(now = new Date()): WisdomItem {
+  return QUESTIONS[emailWeekIndex(emailWeekKey(now)) % QUESTIONS.length];
+}
+
+/** The proverb card beside the grid, changing with the person's own life week. */
+export function proverbForWeek(lifeWeekIndex: number): WisdomItem {
+  return PROVERBS[lifeWeekIndex % PROVERBS.length];
+}

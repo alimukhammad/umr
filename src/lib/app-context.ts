@@ -10,6 +10,7 @@ export type Overlay =
   | { kind: 'week'; index: number }
   | { kind: 'milestone'; index: number }
   | { kind: 'share' }
+  | { kind: 'wallpaper' }
   | { kind: 'settings' }
   | { kind: 'support' }
   | { kind: 'unlock'; emoji: EmojiKey; week: number };

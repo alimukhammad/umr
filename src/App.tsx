@@ -6,6 +6,7 @@ import { SettingsSheet } from './components/SettingsSheet';
 import { ShareSheet } from './components/ShareSheet';
 import { SupportSheet } from './components/SupportSheet';
 import { UnlockSheet } from './components/UnlockSheet';
+import { WallpaperSheet } from './components/WallpaperSheet';
 import { YearView } from './components/YearView';
 import { AppCtx, prefersReducedMotion, type Ctx, type Overlay } from './lib/app-context';
 import { PALETTES } from './lib/grid';
@@ -180,6 +181,8 @@ export default function App() {
               return <MilestoneForm key={key} index={o.index} />;
             case 'share':
               return <ShareSheet key={key} />;
+            case 'wallpaper':
+              return <WallpaperSheet key={key} />;
             case 'settings':
               return (
                 <SettingsSheet

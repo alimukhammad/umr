@@ -251,3 +251,19 @@ canvas.tappable { cursor: pointer; touch-action: manipulation; }
 .row-btns.start { justify-content: flex-start; margin-top: 0; }
 textarea.code { font-family: ui-monospace, Menlo, monospace; font-size: 14px; word-break: break-all; min-height: 0; }
 .ok { color: var(--ms); font-weight: 600; }
+
+/* This week's question, first thing on the home screen */
+.week-question { padding: 12px 14px; margin-bottom: 14px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); }
+.week-question .label { margin-bottom: 2px; }
+.week-question .q { font-size: 20px; line-height: 1.4; margin: 0; }
+.week-question .link { padding: 6px 0; min-height: 44px; }
+
+/* Wallpaper maker */
+.seg { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.seg button { min-height: 44px; border: 0; background: var(--surface); color: var(--text); cursor: pointer; font: inherit; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button.on { background: var(--lived); color: var(--on-primary); font-weight: 600; }
+.wall-preview { position: relative; align-self: center; width: min(62vw, 240px); }
+.wall-preview img, .wall-preview .share-placeholder { display: block; width: 100%; border-radius: 22px; border: 6px solid #1e2530; aspect-ratio: 9 / 19.5; }
+.wall-preview .fake-clock { position: absolute; top: 13%; left: 0; right: 0; text-align: center; font-size: clamp(32px, 11vw, 46px); font-weight: 600; color: rgba(255, 255, 255, 0.85); mix-blend-mode: difference; pointer-events: none; }
+.wall-preview.busy img { opacity: 0.45; transition: opacity 0.2s; }

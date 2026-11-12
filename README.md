@@ -19,6 +19,8 @@ Umr (Uzbek for "life") shows a person's life as a woven grid of weeks. Live at *
 | Life Emoji: 8 Noto emoji as pins on the grid (7 px phone, 11 px desktop), year view and share image; dove free, the rest unlocked by a signed code | ✅ Needs payment link and contact settings |
 | S9 Weekly reflection by email: email + consent, double opt-in, Sunday 20:00 Tashkent | ✅ Needs the Apps Script deployed |
 | S10 Share image, 1080 × 1920, made on the device, no name/date/notes | ✅ |
+| Wallpaper: the grid as a phone wallpaper at the screen's own size, lock or home screen layout, light or dark, one 'Week N of age A' line; set-as-wallpaper steps for iPhone and Android | ✅ |
+| This week's question at the top of the home screen, the same one as the Sunday email | ✅ |
 | S11 Settings: language, theme, horizon 75–100, birth date, email, download and restore a backup file, delete everything | ✅ |
 | S12 Support: all five listed numbers, **labelled unverified, for testing only** | ⚠️ Verify before launch |
 | S8 Accounts and sync across devices | Not planned for now (no server) |
@@ -83,6 +85,7 @@ src/lib/week.ts         the one week function + tests (lifeWeek, weekRange, open
 src/lib/grid.ts         canvas drawing shared by the grid and the share image; Design brief palettes
 src/lib/store.ts        browser storage, JSON backup export and import
 src/lib/reminders.ts    email sign-up call to the Apps Script
+src/lib/wallpaper.ts    phone wallpaper drawing (lock/home safe areas)
 src/lib/emoji.ts        the 8 Life Emoji, which one shows per week, image loading
 src/lib/unlock.ts       unlock code check (ECDSA P-256 public key)
 tools/make-unlock-code.mjs  makes a signed unlock code from your private key

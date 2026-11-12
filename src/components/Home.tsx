@@ -5,7 +5,7 @@ import { openWeeks } from '../lib/week';
 import { emojiByWeek, pinImages, useEmojiImages } from '../lib/emoji';
 import { useInstall } from '../lib/platform';
 import { remindersEnabled } from '../lib/reminders';
-import { wisdomForWeek } from '../lib/wisdom';
+import { proverbForWeek, questionOfTheWeek } from '../lib/wisdom';
 import { GridCanvas } from './GridCanvas';
 import { Mark } from './Mark';
 
@@ -23,7 +23,8 @@ export function Home({ revealing, revealDone, onRevealDone, onContinue }: { reve
     ow === null
       ? fill(t.grid.srSummaryBeyond, { lived: fmtNum(current, locale), week, age })
       : fill(t.grid.srSummary, { lived: fmtNum(current, locale), week, age, open: fmtNum(ow, locale), years: state.horizon });
-  const wisdom = wisdomForWeek(current);
+  const question = questionOfTheWeek();
+  const wisdom = proverbForWeek(current);
   const reduced = prefersReducedMotion();
 
   return (
@@ -46,6 +47,15 @@ export function Home({ revealing, revealDone, onRevealDone, onContinue }: { reve
       <div className="home-body">
         <section className="grid-col">
           {revealing && <p className="reveal-caption serif">{t.reveal.caption}</p>}
+          {!revealing && (
+            <section className="week-question" aria-label={t.grid.questionTitle}>
+              <p className="label">{t.grid.questionTitle}</p>
+              <p className="serif q">{question.text[locale]}</p>
+              <button className="link small" onClick={() => open({ kind: 'week', index: current })}>
+                {t.week.writeNote} →
+              </button>
+            </section>
+          )}
           <GridCanvas
             rows={rows}
             current={current}
@@ -117,6 +127,9 @@ export function Home({ revealing, revealDone, onRevealDone, onContinue }: { reve
             </figure>
 
             <p className="quiet small hint">{t.grid.tapHint}</p>
+            <button className="link small" onClick={() => open({ kind: 'wallpaper' })}>
+              {t.grid.wallpaperLink} →
+            </button>
             {(installState === 'prompt' || installState === 'ios-steps') && (
               <button className="link small" onClick={() => open({ kind: 'settings' })}>
                 {t.grid.installLink} →

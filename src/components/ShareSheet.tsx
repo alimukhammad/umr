@@ -10,7 +10,7 @@ const H = 1920;
 
 /** S10 Share: a 1080 × 1920 image made on the device, with no name, birth date or notes. */
 export function ShareSheet() {
-  const { state, t, palette, current, age, unlocked } = useApp();
+  const { state, t, palette, current, age, unlocked, replace } = useApp();
   const [url, setUrl] = useState<string | null>(null);
   const [blob, setBlob] = useState<Blob | null>(null);
 
@@ -94,6 +94,9 @@ export function ShareSheet() {
     <Sheet title={t.share.title}>
       <p className="quiet small">{t.share.note}</p>
       <div className="share-preview">{url ? <img src={url} alt={t.share.line} /> : <div className="share-placeholder" />}</div>
+      <button className="link small" onClick={() => replace({ kind: 'wallpaper' })}>
+        {t.grid.wallpaperLink} →
+      </button>
       <div className="row-btns">
         {blob && (
           <button className="btn" onClick={() => void saveFile('umr-life-in-weeks.png', blob)}>
