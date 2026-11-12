@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useApp } from '../lib/app-context';
-import { fill } from '../lib/i18n';
+import { fill, policyHref } from '../lib/i18n';
 import { isEmail, remindersEnabled, requestReminders } from '../lib/reminders';
 
 /** Weekly reflection by email (replaces S9's Telegram reminder). Sign-up goes to the Apps Script. */
@@ -50,7 +50,12 @@ export function EmailReminders() {
       </label>
       <label className="check">
         <input type="checkbox" checked={agree} onChange={(e) => (setAgree(e.target.checked), setErr(null))} />
-        <span className="small">{t.settings.consent}</span>
+        <span className="small">
+          {t.settings.consent}{' '}
+          <a href={policyHref(locale)} target="_blank" rel="noopener">
+            {t.common.policy}
+          </a>
+        </span>
       </label>
       <p className="error" role="alert">
         {err ?? ' '}

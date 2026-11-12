@@ -81,6 +81,7 @@ Emoji artwork: Noto Emoji by Google, Apache License 2.0 (`public/emoji/NOTICE.tx
 ## Structure
 
 ```
+policy/index.html       the privacy policy at umr.grader.uz/policy (plain page, all three languages; fill the [LLC] placeholders)
 src/lib/week.ts         the one week function + tests (lifeWeek, weekRange, openWeeks, birth checks, Tashkent today)
 src/lib/grid.ts         canvas drawing shared by the grid and the share image; Design brief palettes
 src/lib/store.ts        browser storage, JSON backup export and import
