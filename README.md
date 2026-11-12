@@ -25,7 +25,7 @@ Umr (Uzbek for "life") shows a person's life as a woven grid of weeks. Live at *
 | S12 Support: all five listed numbers, **labelled unverified, for testing only** | ⚠️ Verify before launch |
 | S8 Accounts and sync across devices | Not planned for now (no server) |
 
-Audience: people in Uzbekistan at launch. Uzbek Latin is the default whatever the browser language, and weeks roll over at midnight Tashkent time (UTC+5).
+Audience: people in Uzbekistan at launch. The first language follows the phone (Uzbek → Uzbek Latin, Russian → Russian, anything else → English) until the person picks one, and weeks roll over at midnight Tashkent time (UTC+5).
 
 Languages: Uzbek Latin, Russian, English — **draft copy**, needs native review. Uzbek uses the current alphabet with ʻ (U+02BB); convert before 22 April 2027.
 

@@ -10,7 +10,7 @@ import { WallpaperSheet } from './components/WallpaperSheet';
 import { YearView } from './components/YearView';
 import { AppCtx, prefersReducedMotion, type Ctx, type Overlay } from './lib/app-context';
 import { PALETTES } from './lib/grid';
-import { DEFAULT_LOCALE, dicts } from './lib/i18n';
+import { detectLocale, dicts } from './lib/i18n';
 import { clearAll, initialState, load, save, type State } from './lib/store';
 import { lifeWeek, tashkentTodayISO } from './lib/week';
 
@@ -48,8 +48,8 @@ export default function App() {
   const [today, setToday] = useState(tashkentTodayISO);
   const historyOk = useRef(true);
 
-  // Uzbek Latin first, whatever the browser's language. Russian and English stay one tap away.
-  const locale = state.locale ?? DEFAULT_LOCALE;
+  // The phone's language until the person picks one (Uzbek, Russian, else English).
+  const locale = state.locale ?? detectLocale();
   const t = dicts[locale];
   const systemDark = useSystemDark();
   const themeName = state.theme === 'auto' ? (systemDark ? 'dark' : 'light') : state.theme;

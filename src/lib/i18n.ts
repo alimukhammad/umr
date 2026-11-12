@@ -5,18 +5,19 @@ import { uzLatn } from '../locales/uz-Latn';
 // Locale codes follow Technical requirements: never a bare 'uz', so 'uz-Cyrl' can be added cleanly.
 export type Locale = 'uz-Latn' | 'ru' | 'en';
 export const LOCALES: Locale[] = ['uz-Latn', 'ru', 'en'];
-export const DEFAULT_LOCALE: Locale = 'uz-Latn';
+/** Used when the phone's language is none of the three. */
+export const DEFAULT_LOCALE: Locale = 'en';
 export const dicts: Record<Locale, Dict> = { 'uz-Latn': uzLatn, ru, en };
 
-/** Language from the browser (later: Telegram's language_code). Not used at launch: Uzbek Latin is the default. */
-export function detectLocale(langs: readonly string[] = navigator.languages ?? [navigator.language]): Locale {
+/** The phone's language decides the first language (12 Nov 2026). 'uz' is treated as 'uz-Latn'; anything else gets English. */
+export function detectLocale(langs: readonly string[] = typeof navigator !== 'undefined' ? navigator.languages ?? [navigator.language] : []): Locale {
   for (const raw of langs) {
     const l = raw.toLowerCase();
     if (l.startsWith('uz')) return 'uz-Latn';
     if (l.startsWith('ru')) return 'ru';
     if (l.startsWith('en')) return 'en';
   }
-  return 'uz-Latn';
+  return DEFAULT_LOCALE;
 }
 
 export function fill(s: string, vars: Record<string, string | number>) {
