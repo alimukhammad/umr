@@ -8,7 +8,7 @@ export const uzLatn: Dict = {
   months: ['yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun', 'iyul', 'avgust', 'sentabr', 'oktabr', 'noyabr', 'dekabr'],
   monthsNom: ['Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun', 'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'],
   monthsShort: ['yan', 'fev', 'mar', 'apr', 'may', 'iyn', 'iyl', 'avg', 'sen', 'okt', 'noy', 'dek'],
-  common: { back: 'Orqaga', close: 'Yopish', save: 'Saqlash', cancel: 'Bekor qilish', delete: 'Oʻchirish' },
+  common: { back: 'Orqaga', close: 'Yopish', save: 'Saqlash', cancel: 'Bekor qilish', delete: 'Oʻchirish', policy: 'Maxfiylik siyosati' },
   welcome: {
     title: 'Bu sizning haftalardagi umringiz.',
     lead: 'Har bir katak — bir hafta. Butun umr bir sahifada, hafta-hafta toʻqilgan. Unga qarang va keyingi haftani nimaga bagʻishlashni tanlang.',

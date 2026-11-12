@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useApp } from '../lib/app-context';
-import { dicts, fill, fmtDate, LOCALES } from '../lib/i18n';
+import { dicts, fill, fmtDate, LOCALES, policyHref } from '../lib/i18n';
 import { exportJSON, hasPersonalEntries, parseImport, type ThemePref } from '../lib/store';
 import { saveFile } from '../lib/files';
 import { EmailReminders } from './EmailReminders';
@@ -128,6 +128,9 @@ export function SettingsSheet({ onChangeBirth }: { onChangeBirth: () => void }) 
           </div>
         </div>
         <p className="quiet small">{t.settings.about}</p>
+        <a className="link" href={policyHref(locale)}>
+          {t.common.policy} →
+        </a>
       </section>
     </Sheet>
   );

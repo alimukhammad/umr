@@ -46,3 +46,8 @@ export function fmtDate(ms: number, locale: Locale, short = false) {
   if (short) return `${day} ${month}`;
   return `${day} ${month} ${y}`;
 }
+
+/** The static privacy policy page, opened in the reader's language. */
+export function policyHref(locale: Locale) {
+  return `/policy/#${locale === 'uz-Latn' ? 'uz' : locale}`;
+}

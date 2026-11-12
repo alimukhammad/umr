@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { dicts, LOCALES, type Locale } from '../lib/i18n';
+import { dicts, LOCALES, policyHref, type Locale } from '../lib/i18n';
 import { checkBirthDate, tashkentTodayISO } from '../lib/week';
 import { Mark } from './Mark';
 
@@ -23,7 +23,10 @@ export function Welcome({ locale, onLocale, onBegin }: { locale: Locale; onLocal
         <button className="btn primary" onClick={onBegin}>
           {t.welcome.begin}
         </button>
-        <p className="quiet small">{t.welcome.privacy}</p>
+        <p className="quiet small">
+          {t.welcome.privacy}{' '}
+          <a href={policyHref(locale)}>{t.common.policy}</a>
+        </p>
       </div>
     </main>
   );
@@ -101,7 +104,10 @@ export function BirthDate({
         <button className="btn primary" type="submit" disabled={!d || !m || y.length !== 4}>
           {t.birth.submit}
         </button>
-        <p className="quiet small">{t.welcome.privacy}</p>
+        <p className="quiet small">
+          {t.welcome.privacy}{' '}
+          <a href={policyHref(locale)}>{t.common.policy}</a>
+        </p>
       </form>
     </main>
   );

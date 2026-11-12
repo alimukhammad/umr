@@ -1,5 +1,5 @@
 import { readdirSync, statSync, writeFileSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { join, relative, resolve } from 'node:path';
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { viteSingleFile } from 'vite-plugin-singlefile';
@@ -27,10 +27,11 @@ function serviceWorker(): Plugin {
       };
       walk(outDir);
       const precache = files.filter(
-        (f) => !/^\/(sw\.js|CNAME|\.well-known\/)/.test(f) && !/\.(txt|map)$/.test(f) && !/latin-ext/.test(f) && f !== '/index.html',
+        (f) =>
+          !/^\/(sw\.js|CNAME|\.well-known\/)/.test(f) && !/\.(txt|map)$/.test(f) && !/latin-ext/.test(f) && f !== '/index.html' && f !== '/policy/index.html',
       );
       const version = Date.now().toString(36);
-      const tpl = SW_TEMPLATE.replace('__VERSION__', version).replace('__PRECACHE__', JSON.stringify(['/', ...precache], null, 1));
+      const tpl = SW_TEMPLATE.replace('__VERSION__', version).replace('__PRECACHE__', JSON.stringify(['/', '/policy/', ...precache], null, 1));
       writeFileSync(join(outDir, 'sw.js'), tpl);
     },
   };
@@ -59,15 +60,20 @@ self.addEventListener('fetch', (e) => {
   // Only this site's own files. Email sign-up (Google) and payment links pass straight through.
   if (req.method !== 'GET' || url.origin !== self.location.origin) return;
 
-  // Pages: try the network for the newest version, fall back to the saved app.
+  // Pages: try the network for the newest version, fall back to the saved copy.
+  // The app lives at '/', the privacy policy at '/policy/'; each is saved under its own key.
   if (req.mode === 'navigate') {
+    const key = /^\/policy\/?$/.test(url.pathname) ? '/policy/' : '/';
     e.respondWith(
       fetch(req)
         .then((res) => {
-          if (res.ok) caches.open(CACHE).then((c) => c.put('/', res.clone()));
+          if (res.ok && !res.redirected) {
+            const copy = res.clone();
+            caches.open(CACHE).then((c) => c.put(key, copy));
+          }
           return res;
         })
-        .catch(() => caches.match('/')),
+        .catch(() => caches.match(key).then((hit) => hit || caches.match('/'))),
     );
     return;
   }
@@ -96,6 +102,10 @@ export default defineConfig(({ mode }) => ({
   // The single-file test build is served from a sub-path, so it loads public/ files relatively.
   base: mode === 'single' ? './' : '/',
   define: { __PWA__: JSON.stringify(mode !== 'single') },
-  build: { outDir: mode === 'single' ? 'dist-single' : 'dist' },
+  build: {
+    outDir: mode === 'single' ? 'dist-single' : 'dist',
+    // The privacy policy is a plain page of its own at /policy/, readable without the app.
+    rollupOptions: mode === 'single' ? undefined : { input: { main: resolve(__dirname, 'index.html'), policy: resolve(__dirname, 'policy/index.html') } },
+  },
   test: { environment: 'node' },
 }));

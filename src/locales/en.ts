@@ -5,7 +5,7 @@ export const en = {
   months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
   monthsNom: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
   monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-  common: { back: 'Back', close: 'Close', save: 'Save', cancel: 'Cancel', delete: 'Delete' },
+  common: { back: 'Back', close: 'Close', save: 'Save', cancel: 'Cancel', delete: 'Delete', policy: 'Privacy policy' },
   welcome: {
     title: 'This is your life in weeks.',
     lead: 'Every square is one week. See a whole life on one page, woven a week at a time, then choose what to give the next one.',
