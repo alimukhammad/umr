@@ -12,11 +12,11 @@ on:
       versionCode:
         description: 'Version code (a whole number, higher than the last upload)'
         required: true
-        default: '1'
+        default: '2'
       versionName:
         description: 'Version name shown in the store'
         required: true
-        default: '1.0.0'
+        default: '1.0.1'
 
 permissions:
   contents: read
